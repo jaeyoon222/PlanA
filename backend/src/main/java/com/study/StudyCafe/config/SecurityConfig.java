@@ -102,7 +102,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration c = new CorsConfiguration();
-        c.setAllowedOrigins(List.of("http://14.37.8.141:3000")); // * 쓰지 말기 (allowCredentials=true)
+        c.setAllowedOrigins(List.of("http://52.79.241.126:3000")); // * 쓰지 말기 (allowCredentials=true)
         c.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         c.setAllowedHeaders(Arrays.asList("Content-Type","Authorization","X-Requested-With"));
         c.setExposedHeaders(List.of("Location")); // 선택

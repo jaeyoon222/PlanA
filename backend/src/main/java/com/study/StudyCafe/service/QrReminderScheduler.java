@@ -53,9 +53,9 @@ public class QrReminderScheduler {
                     reservationRepository.save(res); // 저장 꼭 필요
 
                     String token = res.getQrToken();
-                    String checkinUrl = "https://14.37.8.141/checkin/" + token;
+                    String checkinUrl = "https://52.79.241.126/checkin/" + token;
                     String imagePath = qrGenerator.generateQr(checkinUrl, token);
-                    String qrImageUrl = "https://14.37.8.141:3000" + imagePath;
+                    String qrImageUrl = "https://52.79.241.126:3000" + imagePath;
 
                     log.info("[QR 전송 대상] 예약ID={}, 전화번호={}, QR URL={}", res.getId(), phone, qrImageUrl);
 

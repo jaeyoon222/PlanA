@@ -55,7 +55,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String refreshToken = jwtUtil.generateRefreshToken(subject);
 
         // 프론트 /login 으로 리다이렉트. 환경변수 FRONT_LOGIN_URL 우선
-        String redirectUrl = System.getenv().getOrDefault("FRONT_LOGIN_URL", "http://14.37.8.141:3000/login");
+        String redirectUrl = System.getenv().getOrDefault("FRONT_LOGIN_URL", "http://52.79.241.126:3000/login");
         String url = redirectUrl
                 + "?accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8)
                 + "&refreshToken=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);

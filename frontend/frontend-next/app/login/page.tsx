@@ -5,7 +5,7 @@ import { loginUser, setTokens, getMyInfo } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-const OAUTH_BASE = process.env.NEXT_PUBLIC_OAUTH_BASE || 'http://14.37.8.141:8080';
+const OAUTH_BASE = process.env.NEXT_PUBLIC_OAUTH_BASE || 'http://52.79.241.126:8080';
 
 export default function LoginPage() {
   const router = useRouter();

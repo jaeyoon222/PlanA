@@ -49,7 +49,7 @@ export default function Home() {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const res = await fetch('http://14.37.8.141:8080/api/branches');
+        const res = await fetch('http://52.79.241.126:8080/api/branches');
         if (!res.ok) throw new Error('지점 정보를 불러올 수 없습니다.');
         const data = await res.json();
         setBranches(data || []);
@@ -61,7 +61,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch('http://14.37.8.141:8080/api/public/hello')
+    fetch('http://52.79.241.126/api/public/hello')
       .then(res => res.ok ? res.text() : Promise.reject(res.status))
       .then(setMessage)
       .catch(console.error);
@@ -92,7 +92,7 @@ export default function Home() {
   }
 
     try {
-      const res = await fetch('http://localhost:8080/api/nlu/parse-and-list', {
+      const res = await fetch('http://52.79.241.126/api/nlu/parse-and-list', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: query }),
@@ -132,7 +132,7 @@ export default function Home() {
         const holdErrors: string[] = [];
 
         for (const seat of seatsToHold) {
-          const res = await fetch('http://14.37.8.141:8080/api/seats/hold', {
+          const res = await fetch('http://52.79.241.126:8080/api/seats/hold', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
