@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // WebSocket 연결 엔드포인트 등록 (프론트에서 연결할 주소)
         registry.addEndpoint("/ws-seat")
-                .setAllowedOriginPatterns("http://52.79.241.126:3000") // CORS 허용 (운영 시 제한 필요)
+                .setAllowedOriginPatterns("http://43.201.178.143:3000") // CORS 허용 (운영 시 제한 필요)
                 .withSockJS(); // SockJS 폴백 지원
     }
 }

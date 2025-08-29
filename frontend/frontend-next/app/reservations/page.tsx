@@ -58,7 +58,7 @@ export default function ReservationListPage() {
 
     setIsCancelling(true);
     try {
-      const res = await fetch("http://52.79.241.126/api/payments/cancel", {
+      const res = await fetch("http://43.201.178.143:8080/api/payments/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ impUid }),

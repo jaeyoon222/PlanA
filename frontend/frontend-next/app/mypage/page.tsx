@@ -63,7 +63,7 @@ export default function MyPage() {
 
   // 이미지 URL 확인용 콘솔 로그
   const profileImageUrl = user.profileImage
-    ? `http://52.79.241.126:8080${user.profileImage.startsWith("/") ? "" : "/"}${user.profileImage}`
+    ? `http://43.201.178.143:8080${user.profileImage.startsWith("/") ? "" : "/"}${user.profileImage}`
     : "/default-profile.png";
 
   console.log("🖼 프로필 이미지 URL:", profileImageUrl);

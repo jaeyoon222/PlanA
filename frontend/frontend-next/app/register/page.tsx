@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://52.79.241.126:8080/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://43.201.178.143:8080/api';
 
 async function uploadImage(file: File) {
   console.log('[uploadImage] 업로드 시작. 전달된 file:', file);

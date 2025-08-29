@@ -162,7 +162,7 @@ const fmtLocal = (date: Date, time: string) => {
 
       const WS_URL =
         process.env.NEXT_PUBLIC_WS_URL ??
-        `${process.env.NEXT_PUBLIC_API_ORIGIN ?? 'http://52.79.241.126:8080'}/ws-seat`;
+        `${process.env.NEXT_PUBLIC_API_ORIGIN ?? 'http://43.201.178.143:8080'}/ws-seat`;
 
       const client = new Client({
         webSocketFactory: () => new SockJS(WS_URL) as any,
