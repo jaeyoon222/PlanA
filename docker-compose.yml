@@ -2,26 +2,26 @@ version: "3.8"
 
 services:
   frontend:
-  build:
-    context: ./frontend/frontend-next
-    args:
+    build:
+      context: ./frontend/frontend-next
+      args:
+        NEXT_PUBLIC_API_BASE: http://43.201.178.143:8080/api
+        NEXT_PUBLIC_OAUTH_BASE: http://43.201.178.143:8080
+        NEXT_PUBLIC_KAKAO_KEY: 4f79559eb669f29d5035c34fd6c78c9f
+    environment:
       NEXT_PUBLIC_API_BASE: http://43.201.178.143:8080/api
       NEXT_PUBLIC_OAUTH_BASE: http://43.201.178.143:8080
       NEXT_PUBLIC_KAKAO_KEY: 4f79559eb669f29d5035c34fd6c78c9f
-  environment:
-    - NEXT_PUBLIC_API_BASE=http://43.201.178.143:8080/api
-    - NEXT_PUBLIC_OAUTH_BASE=http://43.201.178.143:8080
-    - NEXT_PUBLIC_KAKAO_KEY=4f79559eb669f29d5035c34fd6c78c9f
-  container_name: studycafe-frontend
-  ports:
-    - "3000:3000"
-  depends_on:
-    - backend
-  healthcheck:
-    test: ["CMD", "curl", "-f", "http://43.201.178.143:8080/actuator/health"]
-    interval: 10s
-    timeout: 5s
-    retries: 5
+    container_name: studycafe-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://43.201.178.143:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: ./backend
@@ -34,15 +34,14 @@ services:
       redis:
         condition: service_started
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/studycafe
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=1234
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
-      - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_DATA_REDIS_PORT=6379
-      - FILE_UPLOAD_PATH=/study_uploads
-      
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studycafe
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      FILE_UPLOAD_PATH: /study_uploads
     volumes:
       - ./uploads:/study_uploads
 
@@ -58,8 +57,8 @@ services:
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=studycafe
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: studycafe
     volumes:
       - mysql_data:/var/lib/mysql
     command:
