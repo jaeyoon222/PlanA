@@ -2,12 +2,12 @@ version: "3.8"
 
 services:
   frontend:
-  build:
-    context: ./frontend/frontend-next
-    args:
-      NEXT_PUBLIC_API_BASE: http://43.201.178.143:8080/api
-      NEXT_PUBLIC_OAUTH_BASE: http://43.201.178.143:8080
-      NEXT_PUBLIC_KAKAO_KEY: 4f79559eb669f29d5035c34fd6c78c9f
+    build:
+      context: ./frontend/frontend-next
+      args:
+        NEXT_PUBLIC_API_BASE: http://43.201.178.143:8080/api
+        NEXT_PUBLIC_OAUTH_BASE: http://43.201.178.143:8080
+        NEXT_PUBLIC_KAKAO_KEY: 4f79559eb669f29d5035c34fd6c78c9f
     container_name: studycafe-frontend
     ports:
       - "3000:3000"
