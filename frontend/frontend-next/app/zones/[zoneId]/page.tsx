@@ -379,6 +379,14 @@ const fmtLocal = (date: Date, time: string) => {
     sessionStorage.setItem('pendingSeatIds', JSON.stringify(seatIdsFromQuery));
   }, [query, startTimeFromQuery, endTimeFromQuery]);
 
+  function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
  const requestPayment = async () => {
   if (!userId) {
     toast.error("로그인 후 이용해 주세요.");
@@ -410,7 +418,7 @@ const fmtLocal = (date: Date, time: string) => {
   }
 
   const amount = calculateTotalPrice();
-  const merchantUid = `mid_${userId}_${crypto.randomUUID()}`;
+  const merchantUid = `mid_${userId}_${generateUUID()}`;
 
   const selectedSeatNames = seats
     .filter((s) => selected.includes(s.id))
