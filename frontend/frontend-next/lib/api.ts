@@ -13,10 +13,10 @@ export function clearTokens() { localStorage.removeItem('accessToken'); localSto
 
 function isAbsoluteUrl(url: string) { return /^https?:\/\//i.test(url); }
 function normalizePath(url: string) {
+  // 절대 URL이면 그대로 반환
   if (isAbsoluteUrl(url)) return url;
-  if (API_BASE.endsWith('/api') && url.startsWith('/api')) {
-    return url.replace(/^\/api(?=\/|$)/, '') || '/';
-  }
+
+  // ✅ 절대 URL 아니면 그대로 둠
   return url;
 }
 function buildUrl(url: string) {
