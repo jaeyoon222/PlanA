@@ -5,7 +5,7 @@ services:
     build:
       context: ./frontend/frontend-next
       args:
-        NEXT_PUBLIC_API_BASE: http:/43.201.178.143:8080/api  # ✅ 반드시 /api 포함
+        NEXT_PUBLIC_API_BASE: http://43.201.178.143:8080/api  # ✅ 반드시 /api 포함
     container_name: studycafe-frontend
     ports:
       - "3000:3000"
