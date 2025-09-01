@@ -115,7 +115,7 @@ const fmtLocal = (date: Date, time: string) => {
       console.log(`[reloadSeats] 요청 시작: zoneId=${zoneIdNum}, ${start} ~ ${end}`);
 
       const data = await apiFetch(
-        `/api/seats?zoneId=${zoneIdNum}&startTime=${encodeURIComponent(start)}&endTime=${encodeURIComponent(end)}`
+        `/seats?zoneId=${zoneIdNum}&startTime=${encodeURIComponent(start)}&endTime=${encodeURIComponent(end)}`
       );
       console.log('[reloadSeats] 응답:', data);
 
@@ -268,7 +268,7 @@ const fmtLocal = (date: Date, time: string) => {
       const isMineSelected = selected.includes(seat.id);
       try {
         if (seat.status === 'available') {
-          await apiFetch('/api/seats/hold', {
+          await apiFetch('/seats/hold', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ seatId: seat.id, startTime: startLocal, endTime: endLocal }),
@@ -280,7 +280,7 @@ const fmtLocal = (date: Date, time: string) => {
           } else if (seat.status === 'reserved') {
             toast.error("다른 사용자가 사용 중 입니다.");
         } else if (seat.status === 'hold' && isMineSelected) {
-          await apiFetch('/api/seats/release', {
+          await apiFetch('/seats/release', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ seatId: seat.id }),
@@ -319,7 +319,7 @@ const fmtLocal = (date: Date, time: string) => {
       }
 
       try {
-        await apiFetch('/api/reserve', {
+        await apiFetch('/reserve', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -479,7 +479,7 @@ const fmtLocal = (date: Date, time: string) => {
     async function (rsp: any) {
       if (rsp.success) {
         try {
-          await apiFetch('/api/payments/verify', {
+          await apiFetch('/payments/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -511,7 +511,7 @@ const fmtLocal = (date: Date, time: string) => {
 // zoneIdNum이 존재하면 API 호출
 useEffect(() => {
   if (!zoneIdNum) return;
-  apiFetch(`/api/zones/${zoneIdNum}`)
+  apiFetch(`/zones/${zoneIdNum}`)
     .then((data) => {
       if (data?.zoneName) setZoneName(data.zoneName);
     })
