@@ -1,7 +1,7 @@
 // lib/api.ts
-
 const RAW_API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? '/api';
 const API_BASE = RAW_API_BASE.replace(/\/+$/, '');
+console.log('API_BASE 확인:', process.env.NEXT_PUBLIC_API_BASE);
 
 export function setTokens(accessToken: string, refreshToken?: string) {
   localStorage.setItem('accessToken', accessToken);
