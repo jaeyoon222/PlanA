@@ -85,6 +85,33 @@ export default function EditProfile() {
     }
   };
 
+  const sanitizePayload = (raw: any) => {
+  const sanitized: any = {};
+
+  for (const key in raw) {
+    const value = raw[key];
+
+    // 빈 문자열, null, undefined 제거
+    if (value !== '' && value !== null && value !== undefined) {
+      sanitized[key] = value;
+    }
+  }
+
+  // birth가 문자열이면 yyyy-MM-dd 형식으로 변환
+  if (typeof sanitized.birth === 'string') {
+    try {
+      const date = new Date(sanitized.birth);
+      const yyyyMMdd = date.toISOString().split('T')[0]; // '2025-09-02'
+      sanitized.birth = yyyyMMdd;
+    } catch {
+      delete sanitized.birth;
+    }
+  }
+
+  return sanitized;
+};
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -124,7 +151,8 @@ if (!isSocialUser) {
   if (verificationCode) payload.verificationCode = verificationCode;
 }
 
-await updateUser(payload); // 이제 이 payload는 잘 정제된 데이터!
+const cleanedPayload = sanitizePayload(payload);
+await updateUser(cleanedPayload);
 
       toast.success("정보가 수정되었습니다.");
       router.push('/mypage');
