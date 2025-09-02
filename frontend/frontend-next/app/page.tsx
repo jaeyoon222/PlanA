@@ -46,19 +46,31 @@ export default function Home() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const res = await fetch('http://43.201.178.143:8080/api/branches');
-        if (!res.ok) throw new Error('지점 정보를 불러올 수 없습니다.');
-        const data = await res.json();
-        setBranches(data || []);
-      } catch (e) {
-        console.error('[지점 불러오기 실패]', e);
+useEffect(() => {
+  const fetchBranches = async () => {
+    try {
+      const response = await fetch('http://43.201.178.143:8080/api/branches');
+
+      if (!response.ok) {
+        throw new Error(`지점 정보를 불러오지 못했습니다. (HTTP ${response.status})`);
       }
-    };
-    fetchBranches();
-  }, []);
+
+      const data = await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error('지점 데이터 형식이 올바르지 않습니다.');
+      }
+
+      setBranches(data);
+    } catch (error) {
+      console.error('[지점 불러오기 실패]', error);
+      // Optional: 사용자에게 보여줄 에러 상태 설정
+      // setError('지점 정보를 불러오는 데 실패했습니다.');
+    }
+  };
+
+  fetchBranches();
+}, []);
 
   useEffect(() => {
     fetch('http://43.201.178.143:8080/api/public/hello')

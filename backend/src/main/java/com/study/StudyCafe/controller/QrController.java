@@ -23,7 +23,7 @@ public class QrController {
     @GetMapping("/api/qr/{token}")
     public ResponseEntity<String> generateQr(@PathVariable String token) {
         try {
-            String fullUrl = "http://43.201.178.143:3000/qrcode/" + token; // ✅ URL 전체로 변경
+            String fullUrl = "http://43.201.178.143:3000/api/checkin/" + token; // ✅ URL 전체로 변경
             String base64 = qrGenerator.generateQrBase64(fullUrl);
             return ResponseEntity.ok(base64);
         } catch (WriterException e) {
