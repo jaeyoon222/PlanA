@@ -1,7 +1,8 @@
 package com.study.StudyCafe.controller;
 
-import com.study.StudyCafe.entity.Reservation;
+import com.google.zxing.WriterException;
 import com.study.StudyCafe.repository.ReservationRepository;
+import com.study.StudyCafe.service.QrGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -17,19 +17,32 @@ import java.util.Optional;
 public class QrController {
 
     private final ReservationRepository reservationRepository;
+    private final QrGenerator qrGenerator;
 
+    // ✅ QR 코드 이미지 (Base64) 생성 API
+    @GetMapping("/api/qr/{token}")
+    public ResponseEntity<String> generateQr(@PathVariable String token) {
+        try {
+            String base64 = qrGenerator.generateQrBase64(token);
+            return ResponseEntity.ok(base64); // Content-Type: text/plain
+        } catch (WriterException e) {
+            log.error("QR 생성 실패", e);
+            return ResponseEntity.internalServerError().body("QR 생성 실패");
+        }
+    }
+
+    // ✅ QR 체크인 API
     @GetMapping("/api/checkin/{token}")
     public ResponseEntity<Map<String, String>> checkin(@PathVariable String token) {
-        Optional<Reservation> opt = reservationRepository.findByQrToken(token);
+        var opt = reservationRepository.findByQrToken(token);
         if (opt.isEmpty()) {
             return ResponseEntity.status(404).body(Map.of("message", "유효하지 않은 QR 코드입니다."));
         }
 
-        Reservation reservation = opt.get();
-        LocalDateTime now = LocalDateTime.now();
+        var reservation = opt.get();
+        var now = LocalDateTime.now();
 
-        // ✅ qrStartTime이 null이면 시작 30분 전부터 입장 허용
-        LocalDateTime qrStartTime = reservation.getQrStartTime() != null
+        var qrStartTime = reservation.getQrStartTime() != null
                 ? reservation.getQrStartTime()
                 : reservation.getStartTime().minusMinutes(10);
 

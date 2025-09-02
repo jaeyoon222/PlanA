@@ -24,8 +24,11 @@ export default function EditProfile() {
       setForm(data);
 
       const profileImageUrl = data.profileImage
-        ? `http://43.201.178.143:8080${data.profileImage.startsWith("/") ? "" : "/"}${data.profileImage}`
-        : "/default-profile.png";
+  ? data.profileImage.startsWith('http')
+    ? data.profileImage // ✅ 절대 URL이면 그대로 사용
+    : `http://43.201.178.143:8080${data.profileImage.startsWith("/") ? "" : "/"}${data.profileImage}`
+  : "/default-profile.png";
+
 
       console.log("🖼 프로필 이미지 URL (EditProfile):", profileImageUrl);
 

@@ -62,19 +62,19 @@ public class QrReminderScheduler {
                     reservationRepository.save(res);
 
                     String token = res.getQrToken();
-                    String checkinUrl = "https://43.201.178.143/checkin-result/" + token;
+                    String checkinUrl = "http://43.201.178.143/checkin-result/" + token;
 
                     // ✅ QR 이미지를 base64로 생성
                     String base64Qr = qrGenerator.generateQrBase64(checkinUrl);
 
                     // ✅ 문자에 포함할 URL (뷰어 페이지)
-                    String viewQrUrl = "https://43.201.178.143:3000/qrcode/" + token;
+                    String viewQrUrl = "http://43.201.178.143:3000/qrcode/" + token;
 
                     log.info("[QR 전송 대상] 예약ID={}, 전화번호={}, 보기용 URL={}", res.getId(), phone, viewQrUrl);
 
                     smsService.sendSMS(
                             phone,
-                            "[스터디카페] 예약 30분 전입니다.\n아래 링크를 눌러 QR을 확인하세요.\n" + viewQrUrl
+                            "[스터디카페] 예약 30분 전입니다.아래 링크를 눌러 QR을 확인하세요." + viewQrUrl
                     );
 
                     log.info("[QR 문자 전송 완료] 예약ID={}, 전화번호={}", res.getId(), phone);
