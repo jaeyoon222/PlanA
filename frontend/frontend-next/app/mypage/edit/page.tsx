@@ -183,7 +183,7 @@ await updateUser(cleanedPayload);
                className="w-full p-3 rounded bg-white/20" />
         <input name="nickname" value={form?.nickname ?? ''} onChange={handleChange} placeholder="닉네임"
                className="w-full p-3 rounded bg-white/20" />
-        <input type="date" name="birth" value={form?.birth ?? ''} onChange={handleChange}
+        <input type="birth" name="birth" value={form?.birth ?? ''} onChange={handleChange} placeholder='생년월일(0000-00-00)'
               className="w-full p-3 rounded bg-white/20"/>
         <input name="address" value={form?.address ?? ''} onChange={handleChange} placeholder="주소"
                className="w-full p-3 rounded bg-white/20" />
