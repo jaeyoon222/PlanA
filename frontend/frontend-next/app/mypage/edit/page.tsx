@@ -156,9 +156,16 @@ await updateUser(cleanedPayload);
 
       toast.success("정보가 수정되었습니다.");
       router.push('/mypage');
-    } catch (err) {
-      toast.error("정보 수정 실패");
-    }
+    } catch (err: any) {
+  const msg = err?.message || '';
+
+  if (msg.includes('인증번호') || msg.includes('verification')) {
+    toast.error("인증번호가 일치하지 않습니다. 다시 입력해 주세요.");
+    setVerificationCode('');
+  } else {
+    toast.error("정보 수정 실패");
+  }
+}
   };
 
   if (!form) return <p className="text-white text-center mt-10">로딩중...</p>;
@@ -166,14 +173,6 @@ await updateUser(cleanedPayload);
   return (
     <main className="min-h-screen flex items-center justify-center bg-cover bg-center"
           style={{ backgroundImage: "url('/bg-study.png')" }}>
-            <div className="flex justify-end mb-4">
-    <button
-      onClick={() => window.location.href = '/'}
-      className="bg-white/20 hover:bg-white/30 text-white rounded px-4 py-2 transition"
-    >
-      홈으로
-    </button>
-  </div>
       <form onSubmit={handleSubmit}
             className="w-full max-w-lg p-8 bg-white/10 backdrop-blur-md border border-white/30 rounded-xl text-white space-y-4 shadow-xl">
         <h1 className="text-3xl font-bold text-center">정보 수정</h1>

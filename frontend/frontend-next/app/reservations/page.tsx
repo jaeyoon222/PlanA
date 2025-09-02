@@ -86,6 +86,13 @@ export default function ReservationListPage() {
       className="min-h-screen bg-cover bg-center px-4 py-10"
       style={{ backgroundImage: "url('/bg-study.png')" }}
     >
+      <button
+    onClick={() => (window.location.href = '/')}
+    className="absolute top-6 right-6 bg-white/20 hover:bg-white/30 text-white rounded px-4 py-2 transition"
+  >
+    홈으로
+  </button>
+  
       <div className="max-w-3xl mx-auto bg-white/10 text-white p-6 rounded-xl border border-white/30 backdrop-blur-md shadow-xl">
         <h1 className="text-3xl font-bold mb-6 text-center">나의 예약 내역</h1>
 
