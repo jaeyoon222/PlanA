@@ -114,17 +114,19 @@ public class UserService {
     }
 
     // ✅ 이메일 중복 체크
-    private void validateDuplicateUser(String email) {
-        log.info("🔎 중복 이메일 검사: {}", email);
+    private void validateDuplicateUser(String email, String phone) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("이메일이 비어 있습니다.");
         }
         if (userRepository.existsByEmail(email)) {
-            log.warn("❌ 중복된 이메일입니다.");
             throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
-        log.info("✅ 중복 없음");
+
+        if (phone != null && !phone.isBlank() && userRepository.existsByPhone(phone)) {
+            throw new IllegalStateException("이미 등록된 전화번호입니다.");
+        }
     }
+
 
     // ✅ 일반 회원가입
     public User registerUser(UserRegisterDto dto) {
@@ -144,7 +146,7 @@ public class UserService {
     }
 
     private User saveUser(User user) {
-        validateDuplicateUser(user.getEmail());
+        validateDuplicateUser(user.getEmail(),user.getPhone());
         User saved = userRepository.save(user);
         userRepository.flush();  // 즉시 DB에 반영
         log.info("✅ saveUser(): 사용자 저장 완료 -> {}", saved.getEmail());

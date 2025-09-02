@@ -109,13 +109,19 @@ export default function EditProfile() {
         imageUrl = uploadResponse.url;
       }
 
-      await updateUser({
-        ...form,
-        profileImage: imageUrl,
-        currentPassword: isSocialUser ? undefined : currentPassword,
-        newPassword: isSocialUser ? undefined : newPassword,
-        verificationCode: isSocialUser ? verificationCode : undefined,
-      });
+      const payload: any = {
+  ...form,
+  profileImage: imageUrl,
+};
+
+if (!isSocialUser) {
+  payload.currentPassword = currentPassword;
+  if (newPassword) payload.newPassword = newPassword;
+} else {
+  if (verificationCode) payload.verificationCode = verificationCode;
+}
+
+await updateUser(payload); // 이제 이 payload는 잘 정제된 데이터!
 
       toast.success("정보가 수정되었습니다.");
       router.push('/mypage');

@@ -57,6 +57,11 @@ const startSocial = (provider: 'kakao' | 'google' | 'naver') => {
   const onSubmitLocal = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
+    const isEmail = userId.includes('@');
+  if (isEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userId)) {
+    setErr('올바른 이메일 형식을 입력해주세요.');
+    return;
+  }
     setLoading(true);
     try {
       await loginUser(userId, password);

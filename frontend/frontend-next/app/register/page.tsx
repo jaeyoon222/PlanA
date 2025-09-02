@@ -54,10 +54,6 @@ async function registerUser(user: any, code: string) {
     profileImage: user.profileImage || undefined,
   };
 
-  console.log('[registerUser] 📡 요청 URL:', url);
-  console.log('[registerUser] 📦 보낼 payload:', payload);
-  console.log('[registerUser] 📎 payload.password:', payload.password); // 🔍 비번 확인
-
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -65,18 +61,17 @@ async function registerUser(user: any, code: string) {
     credentials: 'include',
   });
 
-  console.log('[registerUser] 📬 응답 상태:', res.status);
-
   if (!res.ok) {
-    const text = await res.text().catch(() => '(본문 파싱 실패)');
-    console.error('[registerUser] ❌ 요청 실패. 상태:', res.status, '본문:', text);
-    throw new Error(`인증 번호를 다시 입력해주세요`);
+    // ✅ 여기를 수정
+    const data = await res.json().catch(() => null);
+    const message = data?.message || '회원가입에 실패했습니다.';
+    throw new Error(message); // ❌ 이전: '인증 번호를 다시 입력해주세요'
   }
 
   const data = await res.json().catch(() => null);
-  console.log('[registerUser] ✅ 응답 데이터:', data);
   return data;
 }
+
 
 export default function RegisterPage() {
   const router = useRouter();

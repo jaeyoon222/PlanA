@@ -6,7 +6,9 @@ import com.study.StudyCafe.dto.seat.SeatDto;
 import com.study.StudyCafe.repository.*;
 import com.study.StudyCafe.entity.Seat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.*;
 import java.util.*;
@@ -49,6 +51,11 @@ public class NluController {
                     .map(z -> z.getId())
                     .findFirst()
                     .orElse(null);
+        }
+
+        // ✅ ❗존재하지 않는 지점일 경우 에러 응답
+        if (zoneId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 지점입니다.");
         }
 
         System.out.println("🧭 브랜치: " + pr.getBranch());
