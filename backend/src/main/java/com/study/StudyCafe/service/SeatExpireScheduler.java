@@ -19,7 +19,7 @@ public class SeatExpireScheduler {
     private final SeatRepository seatRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @Scheduled(fixedDelay = 100000) // 5초마다 체크(필요에 맞게 조절)
+    @Scheduled(fixedDelay = 50000)
     @Transactional
     public void sweepExpiredHolds() {
         List<Seat> expired = seatRepository.findExpiredHolds(LocalDateTime.now());

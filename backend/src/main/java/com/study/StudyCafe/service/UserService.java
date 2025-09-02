@@ -116,14 +116,13 @@ public class UserService {
     // ✅ 이메일 중복 체크
     private void validateDuplicateUser(String email, String phone) {
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("이메일이 비어 있습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일이 비어 있습니다.");
         }
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalStateException("이미 가입된 이메일입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다.");
         }
-
         if (phone != null && !phone.isBlank() && userRepository.existsByPhone(phone)) {
-            throw new IllegalStateException("이미 등록된 전화번호입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 등록된 전화번호입니다.");
         }
     }
 

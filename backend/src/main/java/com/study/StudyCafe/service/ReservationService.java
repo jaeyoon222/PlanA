@@ -12,9 +12,11 @@
     import com.study.StudyCafe.repository.SeatRepository;
     import com.study.StudyCafe.repository.UserRepository;
     import lombok.RequiredArgsConstructor;
+    import org.springframework.http.HttpStatus;
     import org.springframework.messaging.simp.SimpMessagingTemplate;
     import org.springframework.stereotype.Service;
     import org.springframework.transaction.annotation.Transactional;
+    import org.springframework.web.server.ResponseStatusException;
 
     import java.time.LocalDateTime;
     import java.util.List;
@@ -31,27 +33,26 @@
         @Transactional
         public void reserveSeats(List<Long> seatIds, Long userId, LocalDateTime start, LocalDateTime end, Payment payment) {
             if (start == null || end == null || !end.isAfter(start)) {
-                throw new IllegalStateException("시작/종료 시간이 올바르지 않습니다.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시작/종료 시간이 올바르지 않습니다.");
             }
 
             User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
             for (Long seatId : seatIds) {
                 Seat seat = seatRepository.findByIdForUpdate(seatId)
-                        .orElseThrow(() -> new IllegalArgumentException("좌석을 찾을 수 없습니다. id=" + seatId));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다. id=" + seatId));
 
                 if (Seat.STATUS_HOLD.equals(seat.getStatus()) && !seat.isHoldActive()) {
                     seat.clearHold();
                 }
 
                 if (reservationRepository.existsBySeatIdAndTimeOverlap(seatId, start, end)) {
-                    throw new IllegalStateException("이미 예약된 시간과 겹치는 좌석이 있습니다. seatId=" + seatId);
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 예약된 시간과 겹치는 좌석이 있습니다. seatId=" + seatId);
                 }
 
                 if (Seat.STATUS_HOLD.equals(seat.getStatus())
                         && (seat.getHoldUser() == null || !seat.getHoldUser().getId().equals(userId))) {
-                    throw new IllegalStateException("다른 사용자가 홀드 중인 좌석이 있습니다. seatId=" + seatId);
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "다른 사용자가 예약 중인 좌석입니다. seatId=" + seatId);
                 }
 
                 Reservation reservation = new Reservation();

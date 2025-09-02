@@ -42,7 +42,7 @@ public class PaymentService {
     private final StudyZoneRepository studyZoneRepository;
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
-    private final int PRICE_PER_HOUR = 100; // 시간당 단가 (서버 고정값)
+    private final int PRICE_PER_MINUTE = 10; // 분당 단가 (예: 2원/분)
 
     @Transactional
     public boolean verifyAndReserve(PaymentRequestDto dto) {
@@ -82,7 +82,7 @@ public class PaymentService {
             LocalDateTime end = LocalDateTime.parse(dto.getEndTime());
             long minutes = Duration.between(start, end).toMinutes();
 
-            int expectedAmount = (int) (dto.getSeatIds().size() * (minutes / 60.0) * PRICE_PER_HOUR);
+            int expectedAmount = (int) (dto.getSeatIds().size() * minutes * PRICE_PER_MINUTE);
 
             if (Math.abs(paidAmount - expectedAmount) > 10) {
                 log.error("💰 금액 불일치. 예상: {}, 실제: {}", expectedAmount, paidAmount);

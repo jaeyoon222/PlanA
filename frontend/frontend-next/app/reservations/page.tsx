@@ -37,7 +37,7 @@ export default function ReservationListPage() {
     typeof ms === "number" && !Number.isNaN(ms) ? fmtKST.format(new Date(ms)) : "-";
 
   useEffect(() => {
-    apiFetch("/api/payments/me")
+    apiFetch("/payments/me")
       .then((data: PaymentDetail[]) => {
         // ✅ createdAt 기준 최신순
         const sorted = [...data].sort(

@@ -40,7 +40,7 @@ public class QrReminderScheduler {
         for (Reservation res : reservations) {
             long minutesUntilStart = java.time.Duration.between(now, res.getStartTime()).toMinutes();
 
-            if (minutesUntilStart <= 60) {
+            if (minutesUntilStart <= 30) {
                 String phone = res.getUser().getPhone();
 
                 try {
@@ -50,26 +50,32 @@ public class QrReminderScheduler {
                         res.setQrToken(token);
                     }
 
-                    reservationRepository.save(res); // 저장 꼭 필요
+                    reservationRepository.save(res); // 저장
 
                     String token = res.getQrToken();
-                    String checkinUrl = "https://43.201.178.143/checkin/" + token;
-                    String imagePath = qrGenerator.generateQr(checkinUrl, token);
-                    String qrImageUrl = "https://43.201.178.143:3000" + imagePath;
 
-                    log.info("[QR 전송 대상] 예약ID={}, 전화번호={}, QR URL={}", res.getId(), phone, qrImageUrl);
+                    // ✅ QR에 인코딩될 진짜 주소 (스캔 결과 처리용)
+                    String checkinUrl = "https://43.201.178.143/checkin-result/" + token;
+
+                    // ✅ QR 이미지 파일 생성
+                    qrGenerator.generateQr(checkinUrl, token);
+
+                    // ✅ 사용자가 눌렀을 때 QR을 눈으로 볼 수 있는 페이지
+                    String viewQrUrl = "https://43.201.178.143:3000/qrcode/" + token;
+
+                    log.info("[QR 전송 대상] 예약ID={}, 전화번호={}, 보기용 URL={}", res.getId(), phone, viewQrUrl);
 
                     smsService.sendSMS(
                             phone,
-                            "[스터디카페] 예약 30분 전입니다. 아래 QR을 사용해 입장하세요: " + qrImageUrl
+                            "[스터디카페] 예약 30분 전입니다. 아래 QR을 촬영해 입장하세요:\n" + viewQrUrl
                     );
 
                     log.info("[QR 문자 전송 완료] 예약ID={}, 전화번호={}", res.getId(), phone);
 
                     res.setNotified(true);
                     reservationRepository.save(res);
-
-                } catch (WriterException | IOException e) {
+                }
+                catch (WriterException | IOException e) {
                     log.error("[QR 생성 실패] 예약ID={}, 오류={}", res.getId(), e.getMessage());
                 } catch (Exception e) {
                     log.error("[문자 전송 실패] 예약ID={}, 오류={}", res.getId(), e.getMessage());

@@ -54,24 +54,34 @@ const startSocial = (provider: 'kakao' | 'google' | 'naver') => {
   const base = provider === 'google' ? GOOGLE_OAUTH : DEFAULT_OAUTH;
   window.location.href = `${base}/oauth2/authorization/${provider}`;
 };
-  const onSubmitLocal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErr(null);
-    const isEmail = userId.includes('@');
+const onSubmitLocal = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setErr(null);
+
+  if (!userId.trim()) {
+    setErr('아이디(또는 이메일)를 입력해주세요.');
+    return;
+  }
+
+  const isEmail = userId.includes('@');
   if (isEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userId)) {
     setErr('올바른 이메일 형식을 입력해주세요.');
     return;
   }
-    setLoading(true);
-    try {
-      await loginUser(userId, password);
-      router.replace('/');
-    } catch (e: any) {
-      setErr(e?.message || '로그인에 실패했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  setLoading(true);
+  try {
+    await loginUser(userId, password);
+    router.replace('/');
+  } catch (e: any) {
+    const msg = e?.message || '로그인에 실패했습니다.';
+    toast.error(msg);  // ✅ 에러 메시지를 toast로 출력
+    setErr(msg);        // ⬅️ 선택사항: input 아래에도 표시
+  } finally {
+    setLoading(false);
+  }
+};
+  
 
   return (
     <main

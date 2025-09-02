@@ -28,7 +28,7 @@ public class SeatService {
     private final ReservationRepository reservationRepository;
     private final SeatEventPublisher seatEventPublisher; // ✅ Redis 발행기
 
-    private static final int HOLD_MINUTES = 1;
+    private static final int HOLD_MINUTES = 5;
 
     @Transactional
     public void holdSeat(Long seatId, Long userId,
