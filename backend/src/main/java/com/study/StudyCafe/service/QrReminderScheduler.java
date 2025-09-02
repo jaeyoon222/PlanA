@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.google.zxing.WriterException;
-import java.io.IOException;
 import java.util.UUID;
 
 @Component
@@ -40,48 +38,46 @@ public class QrReminderScheduler {
         for (Reservation res : reservations) {
             long minutesUntilStart = java.time.Duration.between(now, res.getStartTime()).toMinutes();
 
+            log.info("🟡 예약ID={} | 시작: {} | 현재: {} | 남은: {}분", res.getId(), res.getStartTime(), now, minutesUntilStart);
+
             if (minutesUntilStart <= 30) {
+                log.info("🟢 문자 전송 조건 만족 - 예약ID={}", res.getId());
                 String phone = res.getUser().getPhone();
 
                 try {
-                    // ✅ QR 토큰 없으면 생성
                     if (res.getQrToken() == null) {
                         String token = UUID.randomUUID().toString();
                         res.setQrToken(token);
                     }
 
-                    reservationRepository.save(res); // 저장
+                    reservationRepository.save(res);
 
                     String token = res.getQrToken();
-
-                    // ✅ QR에 인코딩될 진짜 주소 (스캔 결과 처리용)
                     String checkinUrl = "https://43.201.178.143/checkin-result/" + token;
 
-                    // ✅ QR 이미지 파일 생성
-                    qrGenerator.generateQr(checkinUrl, token);
+                    // ✅ QR 이미지를 base64로 생성
+                    String base64Qr = qrGenerator.generateQrBase64(checkinUrl);
 
-                    // ✅ 사용자가 눌렀을 때 QR을 눈으로 볼 수 있는 페이지
+                    // ✅ 문자에 포함할 URL (뷰어 페이지)
                     String viewQrUrl = "https://43.201.178.143:3000/qrcode/" + token;
 
                     log.info("[QR 전송 대상] 예약ID={}, 전화번호={}, 보기용 URL={}", res.getId(), phone, viewQrUrl);
 
                     smsService.sendSMS(
                             phone,
-                            "[스터디카페] 예약 30분 전입니다. 아래 QR을 촬영해 입장하세요:\n" + viewQrUrl
+                            "[스터디카페] 예약 30분 전입니다.\n아래 링크를 눌러 QR을 확인하세요:\n" + viewQrUrl
                     );
 
                     log.info("[QR 문자 전송 완료] 예약ID={}, 전화번호={}", res.getId(), phone);
 
                     res.setNotified(true);
                     reservationRepository.save(res);
-                }
-                catch (WriterException | IOException e) {
-                    log.error("[QR 생성 실패] 예약ID={}, 오류={}", res.getId(), e.getMessage());
+                } catch (WriterException e) {
+                    log.error("[QR 생성 실패] 예약ID={}, 오류={}", res.getId(), e.getMessage(), e);
                 } catch (Exception e) {
-                    log.error("[문자 전송 실패] 예약ID={}, 오류={}", res.getId(), e.getMessage());
+                    log.error("[문자 전송 실패] 예약ID={}, 오류={}", res.getId(), e.getMessage(), e);
                 }
             }
         }
-
     }
-    }
+}

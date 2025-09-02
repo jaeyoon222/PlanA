@@ -7,33 +7,21 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 
 @Component
 public class QrGenerator {
 
-    public String generateQr(String data, String fileName) throws WriterException, IOException {
+    public String generateQrBase64(String data) throws WriterException {
         int width = 300;
         int height = 300;
 
-        String folderPath = "src/main/resources/static/qr";
-        File dir = new File(folderPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        String filePath = folderPath + "/" + fileName + ".png";
-        Path path = Paths.get(filePath);
-
         Map<EncodeHintType, Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.MARGIN, new Random().nextInt(3) + 1);  // 1~3
+        hints.put(EncodeHintType.MARGIN, 1);
 
         BitMatrix matrix = new MultiFormatWriter().encode(
                 data,
@@ -48,24 +36,22 @@ public class QrGenerator {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width, height);
 
-        Random rand = new Random();
+        g.setColor(Color.BLACK);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (matrix.get(x, y)) {
-                    g.setColor(Color.BLACK);
-                    int shape = rand.nextInt(3);
-                    switch (shape) {
-                        case 0 -> g.fillRect(x, y, 1, 1);
-                        case 1 -> g.fillOval(x, y, 1, 1);
-                        case 2 -> g.drawLine(x, y, x, y);
-                    }
+                    g.fillRect(x, y, 1, 1);
                 }
             }
         }
         g.dispose();
-        ImageIO.write(image, "PNG", path.toFile());
 
-        return "/qr/" + fileName + ".png";
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(imageBytes);
+        } catch (Exception e) {
+            throw new RuntimeException("QR Base64 생성 실패", e);
+        }
     }
 }
-
