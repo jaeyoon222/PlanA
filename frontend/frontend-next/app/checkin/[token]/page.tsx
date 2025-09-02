@@ -11,7 +11,7 @@ export default function CheckinResultPage() {
   useEffect(() => {
     if (!token) return;
 
-    fetch(`/api/checkin/${token}`)
+    fetch(`http://43.201.178.143:8080/api/checkin/${token}`)
       .then(async (res) => {
         const text = await res.text();
         if (res.ok) {
