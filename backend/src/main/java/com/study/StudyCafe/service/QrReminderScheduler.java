@@ -73,7 +73,7 @@ public class QrReminderScheduler {
 
                     smsService.sendSMS(
                             phone,
-                            "[PlanA] 예약 30분 전입니다.\n입장 링크:\nhttp://43.201.178.143:3000/qrcode/" + token
+                            "[PlanA] 예약 30분 전입니다.\n주소 복사 후 Qr 확인:\nhttp://43.201.178.143:3000/qrcode/" + token
                     );
 
                     log.info("[QR 문자 전송 완료] 예약ID={}, 전화번호={}", res.getId(), phone);

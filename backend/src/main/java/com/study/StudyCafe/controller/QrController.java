@@ -23,8 +23,9 @@ public class QrController {
     @GetMapping("/api/qr/{token}")
     public ResponseEntity<String> generateQr(@PathVariable String token) {
         try {
-            String base64 = qrGenerator.generateQrBase64(token);
-            return ResponseEntity.ok(base64); // Content-Type: text/plain
+            String fullUrl = "http://43.201.178.143:3000/qrcode/" + token; // ✅ URL 전체로 변경
+            String base64 = qrGenerator.generateQrBase64(fullUrl);
+            return ResponseEntity.ok(base64);
         } catch (WriterException e) {
             log.error("QR 생성 실패", e);
             return ResponseEntity.internalServerError().body("QR 생성 실패");
