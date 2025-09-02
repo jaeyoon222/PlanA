@@ -59,6 +59,23 @@ const fmtLocal = (date: Date, time: string) => {
   const startTimeFromQuery = query.get('startTime');
   const endTimeFromQuery = query.get('endTime');
 
+    const getReadableDuration = () => {
+    const [sh, sm] = startTime.split(':').map(Number);
+    const [eh, em] = endTime.split(':').map(Number);
+
+    const start = new Date(selectedDate);
+    const end = new Date(selectedDate);
+    start.setHours(sh, sm, 0, 0);
+    end.setHours(eh, em, 0, 0);
+
+    const diffMin = Math.max(0, Math.floor((end.getTime() - start.getTime()) / 60000));
+    const h = Math.floor(diffMin / 60);
+    const m = diffMin % 60;
+
+    if (diffMin <= 0) return '시간 설정 오류';
+    return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
+  };
+
 
     const zoneIdNum = useMemo(() => {
       const n = Number(zoneIdStr);
@@ -76,11 +93,21 @@ const fmtLocal = (date: Date, time: string) => {
     const [endTime, setEndTime] = useState('10:00');
 
     const calculateTotalPrice = () => {
-      const sh = Number(startTime.split(':')[0]);
-      const eh = Number(endTime.split(':')[0]);
-      const duration = Math.max(0, eh - sh);
-      return selected.length * duration * 100;
-    };
+  const [sh, sm] = startTime.split(':').map(Number);
+  const [eh, em] = endTime.split(':').map(Number);
+
+  const start = new Date(selectedDate);
+  start.setHours(sh, sm, 0, 0);
+
+  const end = new Date(selectedDate);
+  end.setHours(eh, em, 0, 0);
+
+  const durationMinutes = Math.max(0, Math.floor((end.getTime() - start.getTime()) / 1000 / 60));
+  const pricePerMinute = 10; // 백엔드와 동일한 단가
+
+  return selected.length * durationMinutes * pricePerMinute;
+};
+
 
     const selectedSeats = seats.filter((s) => selected.includes(s.id));
   const seatNames = selectedSeats.map((s) => s.seatName).join(', ');
@@ -336,6 +363,7 @@ const fmtLocal = (date: Date, time: string) => {
         toast.error(err?.message ||"예약 중 오류가 발생했습니다.");
       }
     };
+    
   // ✅ 반드시 이 상태들이 선언되어 있어야 합니다
   const [naturalDateText, setNaturalDateText] = useState<string | null>(null);
   const [naturalDurationText, setNaturalDurationText] = useState<string | null>(null);
@@ -452,8 +480,9 @@ const fmtLocal = (date: Date, time: string) => {
     return;
   }
 
-  const totalHours =
-    Number(endTime.split(':')[0]) - Number(startTime.split(':')[0]);
+const totalMinutes = Math.max(0, Math.floor((endDate.getTime() - startDate.getTime()) / 60000));
+const totalHours = Math.floor(totalMinutes / 60);
+const totalRemainMin = totalMinutes % 60;
 
   const itemName = `스터디카페 좌석 예약 - ${seatNamesStr}`;
   const detailText = [
@@ -462,7 +491,7 @@ const fmtLocal = (date: Date, time: string) => {
     `- 좌석: ${seatNamesStr}`,
     `- 시작: ${dateStr} ${startTime}`,
     `- 종료: ${dateStr} ${endTime}`,
-    `- 총 시간: ${totalHours}시간`,
+    `- 총 시간: ${totalHours}시간${totalRemainMin > 0 ? ` ${totalRemainMin}분` : ''}`,
   ].join('\n');
 
   IMP.init('imp21428454');
@@ -672,7 +701,7 @@ useEffect(() => {
     {/* 예약 시간 */}
     <div className="flex items-center gap-2 text-base font-medium text-white/80">
       <span>
-        총 {Number(endTime.split(':')[0]) - Number(startTime.split(':')[0])}시간 예약
+        <span>총 {getReadableDuration()} 예약</span>
       </span>
     </div>
 
