@@ -74,7 +74,7 @@ public class QrReminderScheduler {
 
                     smsService.sendSMS(
                             phone,
-                            "[스터디카페] 예약 30분 전입니다.아래 링크를 눌러 QR을 확인하세요." + viewQrUrl
+                            "[PlanA] 예약 30분 전입니다. QR 확인: " + viewQrUrl
                     );
 
                     log.info("[QR 문자 전송 완료] 예약ID={}, 전화번호={}", res.getId(), phone);

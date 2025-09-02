@@ -57,6 +57,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/user").authenticated()
                         .requestMatchers("/api/payments/cancel").authenticated()
                         .requestMatchers("/api/send-code").permitAll()
+                        .requestMatchers("/api/qr/**").permitAll()
+                        .requestMatchers("/api/checkin/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, e) -> { // ✅ API는 절대 리다이렉트 금지

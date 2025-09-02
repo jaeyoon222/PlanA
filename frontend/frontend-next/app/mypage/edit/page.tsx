@@ -155,8 +155,8 @@ await updateUser(payload); // 이제 이 payload는 잘 정제된 데이터!
                className="w-full p-3 rounded bg-white/20" />
         <input name="nickname" value={form?.nickname ?? ''} onChange={handleChange} placeholder="닉네임"
                className="w-full p-3 rounded bg-white/20" />
-        <input name="birth" value={form?.birth ?? ''} onChange={handleChange} placeholder="생일 (예:20010204)"
-               className="w-full p-3 rounded bg-white/20" />
+        <input type="date" name="birth" value={form?.birth ?? ''} onChange={handleChange}
+              className="w-full p-3 rounded bg-white/20"/>
         <input name="address" value={form?.address ?? ''} onChange={handleChange} placeholder="주소"
                className="w-full p-3 rounded bg-white/20" />
 
