@@ -25,6 +25,15 @@ public class QrReminderScheduler {
         this.smsService = smsService;
         this.qrGenerator = qrGenerator;
     }
+    private String generateShortToken(int length) {
+        String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder token = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int randomIndex = (int) (Math.random() * chars.length());
+            token.append(chars.charAt(randomIndex));
+        }
+        return token.toString();
+    }
 
     @Scheduled(fixedRate = 60000)
     public void sendReminders() {
@@ -46,7 +55,7 @@ public class QrReminderScheduler {
 
                 try {
                     if (res.getQrToken() == null) {
-                        String token = UUID.randomUUID().toString();
+                        String token = generateShortToken(10); // 10자 토큰 생성
                         res.setQrToken(token);
                     }
 
@@ -65,7 +74,7 @@ public class QrReminderScheduler {
 
                     smsService.sendSMS(
                             phone,
-                            "[스터디카페] 예약 30분 전입니다.\n아래 링크를 눌러 QR을 확인하세요:\n" + viewQrUrl
+                            "[스터디카페] 예약 30분 전입니다.\n아래 링크를 눌러 QR을 확인하세요.\n" + viewQrUrl
                     );
 
                     log.info("[QR 문자 전송 완료] 예약ID={}, 전화번호={}", res.getId(), phone);
