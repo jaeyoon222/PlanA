@@ -23,8 +23,8 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (studyZoneRepository.count() == 0) {
-            createZone("강남", "서울 강남구 위치", 20, 37.5112, 127.0317);
-            createZone("부평", "인천 부평구 위치", 15, 37.5075, 126.7313);
+            createZone("강남", "서울 강남구 위치", 20, 37.5112, 127.1317);
+            createZone("부평", "인천 부평구 위치", 15, 37.5075, 126.7413);
             createZone("부천", "경기 부천시 위치", 25, 37.5043, 126.7630);
 
             System.out.println("✅ 지점 및 좌석 초기 데이터 생성 완료!");

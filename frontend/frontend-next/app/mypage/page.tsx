@@ -26,7 +26,7 @@ export default function MyPage() {
       .then((data) => {
         setUser(data);
 
-        apiFetch("/api/payments/me")
+        apiFetch("/payments/me")
           .then((res: PaymentDetail[]) => {
             const sorted = [...res].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
             setMyPayments(sorted.slice(0, 3));

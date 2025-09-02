@@ -188,7 +188,7 @@ export async function logoutUser() {
 }
 
 export async function updateUser(data: any) {
-  return apiFetch('/api/user', {
+  return apiFetch('/user', {
     method: 'PUT',
     body: JSON.stringify(data),
   });

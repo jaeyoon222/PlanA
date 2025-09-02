@@ -5,7 +5,8 @@ import { loginUser, setTokens, getMyInfo } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-const OAUTH_BASE = process.env.NEXT_PUBLIC_OAUTH_BASE || 'http://43.201.178.143:8080';
+const GOOGLE_OAUTH = 'https://dairy-palm-newest-revelation.trycloudflare.com';  // 👈 Cloudflare Tunnel 주소
+const DEFAULT_OAUTH = 'http://43.201.178.143:8080';  // 👈 기존 EC2 주소
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,10 +50,10 @@ useEffect(() => {
 
 if (redirecting) return null; // 또는 로딩 스피너
 
-  const startSocial = (provider: 'kakao' | 'google' | 'naver') => {
-    window.location.href = `${OAUTH_BASE}/oauth2/authorization/${provider}`;
-  };
-
+const startSocial = (provider: 'kakao' | 'google' | 'naver') => {
+  const base = provider === 'google' ? GOOGLE_OAUTH : DEFAULT_OAUTH;
+  window.location.href = `${base}/oauth2/authorization/${provider}`;
+};
   const onSubmitLocal = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
