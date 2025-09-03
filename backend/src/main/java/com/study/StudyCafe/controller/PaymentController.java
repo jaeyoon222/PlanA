@@ -60,11 +60,8 @@ public class PaymentController {
             @AuthenticationPrincipal String email
     ) {
         if (email == null) {
-            log.warn("❌ 인증되지 않은 사용자의 환불 요청");
             return ResponseEntity.status(401).body("Unauthorized");
         }
-
-        log.info("✅ 사용자 인증 확인 후 환불 요청: {}", email);
 
         boolean result = paymentService.cancelPaymentByImpUid(impUid, reason);
         return ResponseEntity.ok(result ? "SUCCESS" : "FAIL");
@@ -75,11 +72,8 @@ public class PaymentController {
             @AuthenticationPrincipal String email  // ✅ 변경된 부분
     ) {
         if (email == null) {
-            log.warn("🔒 인증된 사용자 정보가 없습니다.");
             return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
         }
-
-        log.info("✅ 사용자 인증 완료: {}", email);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자 정보 없음"));

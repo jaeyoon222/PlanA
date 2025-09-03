@@ -1,4 +1,5 @@
 // lib/api.ts
+
 const RAW_API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? '/api';
 const API_BASE = RAW_API_BASE.replace(/\/+$/, '');
 console.log('API_BASE 확인:', process.env.NEXT_PUBLIC_API_BASE);
@@ -11,12 +12,11 @@ export function getAccessToken() { return localStorage.getItem('accessToken'); }
 export function getRefreshToken() { return localStorage.getItem('refreshToken'); }
 export function clearTokens() { localStorage.removeItem('accessToken'); localStorage.removeItem('refreshToken'); }
 
-function isAbsoluteUrl(url: string) { return /^https?:\/\//i.test(url); }
+function isAbsoluteUrl(url: string) {
+  return /^https?:\/\//i.test(url);
+}
 function normalizePath(url: string) {
-  // 절대 URL이면 그대로 반환
   if (isAbsoluteUrl(url)) return url;
-
-  // ✅ 절대 URL 아니면 그대로 둠
   return url;
 }
 function buildUrl(url: string) {
@@ -37,6 +37,19 @@ function shouldSetJsonContentType(body: any, method?: string) {
 const REFRESH_USE_COOKIE = process.env.NEXT_PUBLIC_REFRESH_USE_COOKIE === 'true';
 const DEFAULT_CREDENTIALS: RequestCredentials = 'include';
 let refreshPromise: Promise<boolean> | null = null;
+
+// ✅ 커스텀 에러 클래스
+export class ApiError extends Error {
+  status: number;
+  data?: any;
+
+  constructor(message: string, status: number, data?: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
 
 export async function apiFetch(url: string, options: RequestInit = {}, _isRetry = false): Promise<any> {
   const method = (options.method || 'GET').toUpperCase();
@@ -65,7 +78,7 @@ export async function apiFetch(url: string, options: RequestInit = {}, _isRetry 
       await new Promise(r => setTimeout(r, 300));
       return apiFetch(url, options, true);
     }
-    throw new Error('네트워크 오류가 발생했습니다.');
+    throw new ApiError('네트워크 오류가 발생했습니다.', 0);
   } finally {
     clearTimeout(timeout);
   }
@@ -87,23 +100,27 @@ export async function apiFetch(url: string, options: RequestInit = {}, _isRetry 
       }
     }
     clearTokens();
-    throw new Error('인증 만료 - 다시 로그인하세요.');
+    throw new ApiError('인증 만료 - 다시 로그인하세요.', 401);
   }
 
   if (res.status === 204) return {};
 
   if (!res.ok) {
     let errorMsg = `API 요청 실패 (${res.status})`;
+    let errorData: any = null;
+
     try {
       if (isJson(res.headers)) {
         const j = await res.json();
+        errorData = j;
         errorMsg = j.message || j.error || JSON.stringify(j) || errorMsg;
       } else {
         const t = await res.text();
         if (t) errorMsg = t;
       }
     } catch {}
-    throw new Error(errorMsg);
+
+    throw new ApiError(errorMsg, res.status, errorData);
   }
 
   if (isJson(res.headers)) return res.status === 204 ? {} : await res.json();
@@ -159,20 +176,32 @@ async function tryRefreshToken(): Promise<boolean> {
 }
 
 // --- API helpers ---
+
 export function registerUser(user: any) {
   return apiFetch('/register', { method: 'POST', body: JSON.stringify(user) });
 }
 
-// ✅ 로그인: 백엔드 계약에 맞춰 { email, password }
 export async function loginUser(email: string, password: string) {
-  const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-  if (!data?.accessToken) throw new Error('토큰이 응답되지 않았습니다.');
+  const data = await apiFetch('/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!data?.accessToken) {
+    throw new ApiError('토큰이 응답되지 않았습니다.', 500);
+  }
+
   setTokens(data.accessToken, data.refreshToken);
   return data;
 }
 
-export function getMyInfo() { return apiFetch('/me'); }
-export function logout() { clearTokens(); }
+export function getMyInfo() {
+  return apiFetch('/me');
+}
+
+export function logout() {
+  clearTokens();
+}
 
 export async function logoutUser() {
   try {

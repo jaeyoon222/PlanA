@@ -70,18 +70,6 @@ public class AuthController {
             @Valid @RequestBody UserRegisterDto dto,
             @RequestParam("code") String code
     ) {
-        log.info("📩 회원가입 요청 도착");
-        log.info("🧾 받은 DTO 정보:");
-        log.info(" - 이메일: {}", dto.getEmail());
-        log.info("- 비밀번호: {}", dto.getPassword());
-        log.info(" - 닉네임: {}", dto.getNickname());
-        log.info(" - 이름: {}", dto.getName());
-        log.info(" - 생년월일: {}", dto.getBirth());
-        log.info(" - 전화번호: {}", dto.getPhone());
-        log.info(" - 주소: {}", dto.getAddress());
-        log.info(" - 프로필 이미지: {}", dto.getProfileImage());
-        log.info("🔑 인증 코드: {}", code);
-
         userService.registerUserWithVerification(dto, code);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "회원가입 성공"));

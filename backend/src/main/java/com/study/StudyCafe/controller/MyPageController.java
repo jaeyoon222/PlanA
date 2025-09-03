@@ -36,52 +36,32 @@ public class MyPageController {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
-        System.out.println("로그아웃");
         return ResponseEntity.ok("로그아웃 성공");
     }
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
-        System.out.println("🛠️ [uploadFile] 업로드 요청 도착");
-        System.out.println("🔎 파일 객체: " + file);
-        System.out.println("🔎 Content-Type: " + file.getContentType());
-        System.out.println("🔎 파일 크기: " + file.getSize());
-        System.out.println("🔎 원본 파일명: " + file.getOriginalFilename());
-
         if (file.isEmpty()) {
-            System.out.println("🚫 업로드된 파일이 비어 있습니다.");
             return ResponseEntity.badRequest().body("파일이 비어 있습니다.");
         }
-
         try {
             String originalName = file.getOriginalFilename();
             String fileName = UUID.randomUUID() + "_" + originalName;
             Path uploadPath = Paths.get(uploadDir);
 
-            System.out.println("📁 설정된 uploadDir: " + uploadDir);
-            System.out.println("📁 uploadPath 절대경로: " + uploadPath.toAbsolutePath());
-
             // 업로드 디렉토리 생성
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
-                System.out.println("📂 업로드 디렉토리가 없어 새로 생성함.");
             }
 
             // 파일 저장
             Path filePath = uploadPath.resolve(fileName);
             file.transferTo(filePath.toFile());
 
-            System.out.println("✅ 파일 저장 완료!");
-            System.out.println("📄 저장된 파일명: " + fileName);
-            System.out.println("📍 실제 저장 위치: " + filePath.toAbsolutePath());
-
             String fileUrl = "/uploads/" + fileName;
-            System.out.println("🌐 클라이언트에 전달될 URL: " + fileUrl);
 
             return ResponseEntity.ok(Map.of("url", fileUrl));
-
         } catch (Exception e) {
-            System.out.println("❌ 파일 저장 중 예외 발생: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("업로드 실패: " + e.getMessage());
         }

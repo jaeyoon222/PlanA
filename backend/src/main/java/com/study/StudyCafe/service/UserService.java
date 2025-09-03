@@ -73,24 +73,9 @@ public class UserService {
     // ✅ 회원가입 시 인증번호 확인
     @Transactional
     public User registerUserWithVerification(UserRegisterDto dto, String code) {
-        log.info("🟡 registerUserWithVerification() 호출됨");
-        log.info("📩 받은 코드: {}", code);
-        log.info("📨 DTO 내용:");
-        log.info(" - 이메일: {}", dto.getEmail());
-        log.info(" - 닉네임: {}", dto.getNickname());
-        log.info(" - 이름: {}", dto.getName());
-        log.info(" - 생일: {}", dto.getBirth());
-        log.info(" - 전화번호: {}", dto.getPhone());
-        log.info(" - 주소: {}", dto.getAddress());
-        log.info(" - 프로필 이미지: {}", dto.getProfileImage());
-        log.info(" - 비밀번호: {}", dto.getPassword());
-
         if (!verifyCode(dto.getPhone(), code)) {
-            log.warn("❌ 인증번호 검증 실패");
             throw new IllegalArgumentException("인증번호가 올바르지 않습니다.");
         }
-
-        log.info("✅ 인증번호 검증 성공");
 
         User user = User.builder()
                 .email(dto.getEmail())
@@ -105,11 +90,8 @@ public class UserService {
                 .role(UserRole.USER)
                 .build();
 
-        log.info("💾 저장할 User 객체: {}", user);
-
         User saved = saveUser(user);
 
-        log.info("🎉 저장된 User ID: {}", saved.getId());
         return saved;
     }
 

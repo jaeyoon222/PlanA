@@ -57,13 +57,8 @@ public class NluController {
         if (zoneId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 지점입니다.");
         }
-
-        System.out.println("🧭 브랜치: " + pr.getBranch());
-        System.out.println("🎯 매핑된 zoneId: " + zoneId);
-
         // ✅ 좌석 조회
         var seats = seatRepository.findAllByZoneId(Optional.ofNullable(zoneId).orElse(1L));
-        System.out.println("💺 가져온 좌석 수: " + seats.size());
 
         // ✅ 만료된 hold 정리
         seats.stream()
@@ -72,12 +67,6 @@ public class NluController {
 
         var start = pr.getStartDateTime();
         var end = pr.getEndDateTime();
-
-        System.out.println("⏰ 예약 시간: " + start + " ~ " + end);
-
-        if (start == null || end == null) {
-            System.out.println("❌ 시간 파싱 실패: start 또는 end가 null입니다.");
-        }
 
         // ✅ 예약 및 홀딩 좌석 조회
         var reservations = reservationRepository.findOverlapping(
@@ -90,20 +79,12 @@ public class NluController {
                 .map(Seat::getId)
                 .collect(Collectors.toSet());
 
-        System.out.println("📌 예약 좌석 수: " + reservedIds.size());
-        System.out.println("🔒 홀딩 좌석 수: " + holdingIds.size());
-
         // ✅ 창가 필터
         // ✅ 태그 조건 추출
         Set<String> tags = pr.getSeatTags();
         boolean wantWindow = tags.contains("WINDOW");
         boolean wantOutlet = tags.contains("OUTLET");
         boolean wantQuiet = tags.contains("QUIET");
-
-        System.out.println("🏷️ 요청 태그: " + tags);
-        System.out.println("🌞 창가 필터 적용: " + wantWindow);
-        System.out.println("🔌 콘센트 필터 적용: " + wantOutlet);
-        System.out.println("🤫 조용한 필터 적용: " + wantQuiet);
 
         var dtos = seats.stream()
                 .filter(s -> {
@@ -118,12 +99,6 @@ public class NluController {
                     if (wantQuiet) {
                         include &= Boolean.TRUE.equals(s.isQuiet()); // ✅ Seat 엔티티에 필요
                     }
-
-                    System.out.println("🪑 " + s.getSeatName() +
-                            " | 창가: " + s.isWindowSide() +
-                            " | 콘센트: " + s.isHasOutlet() +
-                            " | 조용한: " + s.isQuiet() +
-                            " | 포함됨: " + include);
 
                     return include;
                 })
@@ -145,13 +120,9 @@ public class NluController {
                     dto.setHasOutlet(Boolean.TRUE.equals(s.isHasOutlet()));
                     dto.setQuiet(Boolean.TRUE.equals(s.isQuiet()));
 
-                    System.out.println("➡️ 최종 포함 좌석: " + s.getSeatName() + " | 상태: " + dto.getStatus());
                     return dto;
                 })
                 .toList();
-
-
-        System.out.println("✅ 최종 응답 좌석 수: " + dtos.size());
 
         return Map.of("parsed", pr, "seats", dtos);
     }

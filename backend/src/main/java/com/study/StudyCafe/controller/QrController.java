@@ -27,7 +27,6 @@ public class QrController {
             String base64 = qrGenerator.generateQrBase64(fullUrl);
             return ResponseEntity.ok(base64);
         } catch (WriterException e) {
-            log.error("QR 생성 실패", e);
             return ResponseEntity.internalServerError().body("QR 생성 실패");
         }
     }

@@ -73,7 +73,6 @@ public class PaymentService {
 
 
             if (!success) {
-                log.warn("❌ 결제 상태가 'paid'가 아님 - impUid: {}", impUid);
                 return false;
             }
 
@@ -85,7 +84,6 @@ public class PaymentService {
             int expectedAmount = (int) (dto.getSeatIds().size() * minutes * PRICE_PER_MINUTE);
 
             if (Math.abs(paidAmount - expectedAmount) > 10) {
-                log.error("💰 금액 불일치. 예상: {}, 실제: {}", expectedAmount, paidAmount);
                 return false;
             }
 
@@ -116,7 +114,6 @@ public class PaymentService {
             return true;
 
         } catch (Exception e) {
-            log.error("❌ 결제 검증 및 예약 중 오류 발생: {}", e.getMessage(), e);
             return false;
         }
     }

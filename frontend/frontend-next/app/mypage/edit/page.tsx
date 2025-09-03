@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getMyInfo, updateUser, apiFetch } from '../../../lib/api';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { ApiError } from '@/lib/api';
 
 export default function EditProfile() {
   const router = useRouter();
@@ -157,13 +158,16 @@ await updateUser(cleanedPayload);
       toast.success("정보가 수정되었습니다.");
       router.push('/mypage');
     } catch (err: any) {
-  const msg = err?.message || '';
+  const msg =
+    err instanceof ApiError
+      ? err.message // 서버에서 보낸 message 그대로 사용
+      : err?.message || '정보 수정 실패';
 
   if (msg.includes('인증번호') || msg.includes('verification')) {
     toast.error("인증번호가 일치하지 않습니다. 다시 입력해 주세요.");
     setVerificationCode('');
   } else {
-    toast.error("정보 수정 실패");
+    toast.error(msg); // 👈 서버 메시지를 그대로 toast로 출력
   }
 }
   };

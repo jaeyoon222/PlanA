@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { ApiError } from '@/lib/api';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://43.201.178.143:8080/api';
 
@@ -62,10 +63,9 @@ async function registerUser(user: any, code: string) {
   });
 
   if (!res.ok) {
-    // ✅ 여기를 수정
     const data = await res.json().catch(() => null);
     const message = data?.message || '회원가입에 실패했습니다.';
-    throw new Error(message); // ❌ 이전: '인증 번호를 다시 입력해주세요'
+    throw new ApiError(message, res.status, data);  // ✅ 수정
   }
 
   const data = await res.json().catch(() => null);

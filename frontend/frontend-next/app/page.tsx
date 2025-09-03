@@ -110,7 +110,10 @@ useEffect(() => {
         body: JSON.stringify({ text: query }),
       });
 
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+      console.error('[파싱 실패]', await res.text());  // ← 콘솔에 디버깅 용도
+      throw new Error('올바르게 입력해주세요. 예: "내일 오후 2~4시 강남점 창가 조용한 자리"');
+}
       const data = await res.json();
 
       setParsed(data.parsed);

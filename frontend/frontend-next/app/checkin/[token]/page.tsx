@@ -13,14 +13,13 @@ export default function CheckinResultPage() {
 
     fetch(`http://43.201.178.143:8080/api/checkin/${token}`)
       .then(async (res) => {
-        const text = await res.text();
+        const data = await res.json();
         if (res.ok) {
           setStatus('success');
-          setMessage(text);
         } else {
           setStatus('fail');
-          setMessage(text);
         }
+        setMessage(data.message); // ✅ JSON에서 message만 추출
       })
       .catch(() => {
         setStatus('fail');
