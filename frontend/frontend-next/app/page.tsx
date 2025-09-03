@@ -112,7 +112,7 @@ useEffect(() => {
 
       if (!res.ok) {
       console.error('[파싱 실패]', await res.text());  // ← 콘솔에 디버깅 용도
-      throw new Error('올바르게 입력해주세요. 예: "내일 오후 2~4시 강남점 창가 조용한 자리"');
+      throw new Error('올바르게 입력해주세요. 예: "내일 오후 2~4시 강남점 창가 자리 1명"');
 }
       const data = await res.json();
 
@@ -204,7 +204,7 @@ useEffect(() => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleParse(); }}
             className="flex-1 text-xl bg-transparent focus:outline-none text-white placeholder-white/70"
-            placeholder="예) 내일 오후 2~4시 강남점 창가 조용한 자리"
+            placeholder="예) 내일 오후 2~4시 강남점 창가 자리 1명"
           />
           <button
             onClick={handleParse}
@@ -215,7 +215,7 @@ useEffect(() => {
           </button>
         </div>
 
-        {error && <p className="text-red-100 text-lg mb-4">{error}</p>}
+        {error && <p className="text-red-100 text-lg mb-4 text-center">{error}</p>}
 
         {parsed && (
           <div className={`w-full rounded-lg p-4 shadow-md mb-6 ${glassBase}`}>

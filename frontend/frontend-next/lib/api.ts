@@ -73,38 +73,60 @@ export async function apiFetch(url: string, options: RequestInit = {}, _isRetry 
   const redirectedToLogin = res.redirected && /\/login(?:[?;].*)?$/.test(new URL(res.url, location.origin).pathname);
   const isOpaqueRedirect = (res.type === 'opaqueredirect');
 
-  if (res.status === 401 || redirectedToLogin || isOpaqueRedirect) {
-    const isRefreshCall = /\/refresh-token$/.test(normalizePath(url));
-    if (!isRefreshCall) {
-      if (!refreshPromise) refreshPromise = tryRefreshToken();
-      const ok = await refreshPromise.finally(() => (refreshPromise = null));
-      if (ok) {
-        const { headers: oldHeaders, ...rest } = options;
-        const nextHeaders = oldHeaders && typeof oldHeaders === 'object'
-          ? Object.fromEntries(Object.entries(oldHeaders).filter(([k]) => k.toLowerCase() !== 'authorization'))
-          : undefined;
-        return apiFetch(url, { ...rest, headers: nextHeaders }, true);
-      }
+ if (res.status === 401 || redirectedToLogin || isOpaqueRedirect) {
+  const path = normalizePath(url);
+  const isRefreshCall = /\/refresh-token$/.test(path);
+  const isLoginCall = /\/login$/.test(path);
+
+  // ✅ 로그인 요청일 경우: 백엔드 메시지를 그대로 throw
+  if (isLoginCall) {
+    try {
+      const errData = await res.json();
+      const msg = errData.message || errData.error || '로그인 실패';
+      throw new Error(msg);
+    } catch {
+      throw new Error('로그인 실패');
     }
-    clearTokens();
-    throw new Error('인증 만료 - 다시 로그인하세요.');
   }
+
+  // ✅ 토큰 만료 관련 요청 처리 (기존과 동일)
+  if (!isRefreshCall) {
+    if (!refreshPromise) refreshPromise = tryRefreshToken();
+    const ok = await refreshPromise.finally(() => (refreshPromise = null));
+    if (ok) {
+      const { headers: oldHeaders, ...rest } = options;
+      const nextHeaders = oldHeaders && typeof oldHeaders === 'object'
+        ? Object.fromEntries(Object.entries(oldHeaders).filter(([k]) => k.toLowerCase() !== 'authorization'))
+        : undefined;
+      return apiFetch(url, { ...rest, headers: nextHeaders }, true);
+    }
+  }
+
+  clearTokens();
+  throw new Error('인증 만료 - 다시 로그인하세요.');
+}
 
   if (res.status === 204) return {};
 
   if (!res.ok) {
-    let errorMsg = `API 요청 실패 (${res.status})`;
-    try {
-      if (isJson(res.headers)) {
-        const j = await res.json();
-        errorMsg = j.message || j.error || JSON.stringify(j) || errorMsg;
-      } else {
-        const t = await res.text();
-        if (t) errorMsg = t;
-      }
-    } catch {}
-    throw new Error(errorMsg);
-  }
+  let errorMsg = `API 요청 실패 (${res.status})`;
+  let responseData = null;
+  try {
+    if (isJson(res.headers)) {
+      responseData = await res.json();
+      errorMsg = responseData.message || responseData.error || JSON.stringify(responseData) || errorMsg;
+    } else {
+      const t = await res.text();
+      if (t) errorMsg = t;
+    }
+  } catch {}
+
+  throw {
+    status: res.status,
+    message: errorMsg,
+    response: responseData,
+  };
+}
 
   if (isJson(res.headers)) return res.status === 204 ? {} : await res.json();
   const ct = res.headers.get('content-type') || '';
