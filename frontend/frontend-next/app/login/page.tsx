@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { loginUser, setTokens, getMyInfo } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { ApiError } from '@/lib/api'; 
 
 const GOOGLE_OAUTH = 'https://dairy-palm-newest-revelation.trycloudflare.com';  // 👈 Cloudflare Tunnel 주소
 const DEFAULT_OAUTH = 'http://43.201.178.143:8080';  // 👈 기존 EC2 주소
@@ -77,7 +76,8 @@ const onSubmitLocal = async (e: React.FormEvent) => {
     router.replace('/');
   } catch (e: any) {
     // ✅ 정확하게 메시지 추출
-    const msg = e instanceof ApiError ? e.message : '로그인 중 오류가 발생했습니다.';
+    const msg =
+    e?.message || e?.data?.message || e?.data?.error || '로그인 중 오류가 발생했습니다.';
     toast.error(msg);   // ✅ toast로 표시
     setErr(msg);        // ✅ input 아래에도 표시
   } finally {
