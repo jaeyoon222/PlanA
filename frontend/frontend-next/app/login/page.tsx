@@ -73,7 +73,10 @@ const onSubmitLocal = async (e: React.FormEvent) => {
   setLoading(true);
   try {
     await loginUser(userId, password);
-    router.replace('/');
+    toast.success('로그인 성공!');
+    setTimeout(() => {
+      router.replace('/');
+    }, 1000);
   } catch (e: any) {
     // ✅ 정확하게 메시지 추출
     const msg =
@@ -139,7 +142,6 @@ const onSubmitLocal = async (e: React.FormEvent) => {
   required
 />
             </div>
-            {err && <p className="text-red-200 text-sm">{err}</p>}
             <button
               type="submit"
               disabled={loading}

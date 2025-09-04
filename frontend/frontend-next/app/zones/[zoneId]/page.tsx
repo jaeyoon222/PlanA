@@ -487,11 +487,11 @@ const totalRemainMin = totalMinutes % 60;
   const itemName = `스터디카페 좌석 예약 - ${seatNamesStr}`;
   const detailText = [
     `Plan A`,
-    `- 지점: ${zoneName}`,
-    `- 좌석: ${seatNamesStr}`,
-    `- 시작: ${dateStr} ${startTime}`,
-    `- 종료: ${dateStr} ${endTime}`,
-    `- 총 시간: ${totalHours}시간${totalRemainMin > 0 ? ` ${totalRemainMin}분` : ''}`,
+    `지점: ${zoneName}`,
+    `좌석: ${seatNamesStr}`,
+    `시작: ${dateStr} ${startTime}`,
+    `종료: ${dateStr} ${endTime}`,
+    `총 시간: ${totalHours}시간${totalRemainMin > 0 ? ` ${totalRemainMin}분` : ''}`,
   ].join('\n');
 
   IMP.init('imp21428454');

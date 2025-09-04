@@ -52,34 +52,57 @@ export default function ReservationListPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleCancel = async (impUid: string) => {
-    const confirmCancel = confirm("정말로 환불하시겠습니까?");
-    if (!confirmCancel) return;
+const requestCancel = async (impUid: string) => {
+  setIsCancelling(true);
+  try {
+    const res = await fetch("http://43.201.178.143:8080/api/payments/cancel", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ impUid }),
+    });
 
-    setIsCancelling(true);
-    try {
-      const res = await fetch("http://43.201.178.143:8080/api/payments/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ impUid }),
-      });
-
-      const text = await res.text();
-      if (text === "SUCCESS") {
-        toast.success("환불이 완료되었습니다.");
-        setPayments((prev) =>
-          prev.map((p) => (p.impUid === impUid ? { ...p, status: "CANCEL" } : p))
-        );
-      } else {
-        toast.error("환불에 실패했습니다.");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("서버 오류가 발생했습니다.");
-    } finally {
-      setIsCancelling(false);
+    const text = await res.text();
+    if (text === "SUCCESS") {
+      toast.success("환불이 완료되었습니다.");
+      setPayments((prev) =>
+        prev.map((p) => (p.impUid === impUid ? { ...p, status: "CANCEL" } : p))
+      );
+    } else {
+      toast.error("환불에 실패했습니다.");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    toast.error("서버 오류가 발생했습니다.");
+  } finally {
+    setIsCancelling(false);
+  }
+};
+
+const handleCancel = (impUid: string) => {
+  toast.custom((t) => (
+    <div className="bg-white text-black rounded-lg shadow-lg p-4 w-72 space-y-3">
+      <p className="font-semibold text-center">정말로 환불하시겠습니까?</p>
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm"
+        >
+          아니오
+        </button>
+        <button
+          onClick={() => {
+            toast.dismiss(t.id);
+            requestCancel(impUid);
+          }}
+          className="px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-sm"
+        >
+          예
+        </button>
+      </div>
+    </div>
+  ));
+};
+
 
   return (
     <main

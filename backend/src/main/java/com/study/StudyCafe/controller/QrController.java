@@ -61,6 +61,6 @@ public class QrController {
         reservation.setUsed(true);
         reservationRepository.save(reservation);
 
-        return ResponseEntity.ok(Map.of("message", "입장 완료! 이용해 주셔서 감사합니다."));
+        return ResponseEntity.ok(Map.of("message", "입장 처리 되었습니다!"));
     }
 }
