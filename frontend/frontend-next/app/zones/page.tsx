@@ -29,7 +29,6 @@ export default function ZoneListPage() {
     const fetchZones = async () => {
       try {
         const data = await apiFetch('/zones');
-        console.log('✅ 지점 목록 로딩 성공:', data);
         setZones(data);
       } catch (err) {
         console.error('❌ 지점 목록 로딩 실패:', err);
@@ -40,7 +39,6 @@ export default function ZoneListPage() {
 
   // 지도 로딩 로직
   useEffect(() => {
-    console.log('📌 selectedZone 변경됨:', selectedZone);
 
     if (!selectedZone) return;
 
@@ -48,8 +46,6 @@ export default function ZoneListPage() {
       console.warn('❗ mapRef.current가 null입니다.');
       return;
     }
-
-    console.log('🧩 mapRef.current:', mapRef.current);
 
     const loadMap = () => {
       const container = mapRef.current;
@@ -67,15 +63,12 @@ export default function ZoneListPage() {
 
       const map = new window.kakao.maps.Map(container, options);
 
-      console.log('📍 지도 객체 생성됨:', map);
-
       new window.kakao.maps.Marker({
         position: new window.kakao.maps.LatLng(selectedZone.latitude, selectedZone.longitude),
         map,
       });
 
       setTimeout(() => {
-        console.log('🔁 지도 relayout + setCenter 호출');
         map.relayout();
         map.setCenter(new window.kakao.maps.LatLng(selectedZone.latitude, selectedZone.longitude));
       }, 100);
@@ -87,11 +80,9 @@ export default function ZoneListPage() {
         setTimeout(loadMap, 100);
       });
     } else {
-      console.log('📦 Kakao Maps SDK 로딩 시작');
       const script = document.createElement('script');
       script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false`;
       script.onload = () => {
-        console.log('✅ Kakao Maps SDK 로드 완료, 지도 초기화 시작');
         window.kakao.maps.load(() => {
           setTimeout(loadMap, 100);
         });
@@ -116,7 +107,6 @@ export default function ZoneListPage() {
             <li
               key={zone.id}
               onClick={() => {
-                console.log('🖱️ 지점 선택됨:', zone);
                 setSelectedZone(zone);
               }}
               className="p-6 rounded-xl cursor-pointer bg-white/10 border border-white/30 backdrop-blur-md shadow-md text-white transition-all duration-200 transform hover:scale-105 hover:shadow-xl"
@@ -152,7 +142,6 @@ export default function ZoneListPage() {
       <div className="flex gap-3">
         <button
           onClick={() => {
-            console.log('❌ 선택 취소됨');
             setSelectedZone(null);
           }}
           className="w-1/2 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition"
@@ -161,7 +150,6 @@ export default function ZoneListPage() {
         </button>
         <button
           onClick={() => {
-            console.log('➡️ 예약 페이지로 이동:', selectedZone.id);
             router.push(`/zones/${selectedZone.id}`);
           }}
           className="w-1/2 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition"

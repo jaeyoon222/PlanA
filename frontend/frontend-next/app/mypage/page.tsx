@@ -53,11 +53,6 @@ export default function MyPage() {
     }
   };
 
-  useEffect(() => {
-    console.log("🧪 API BASE:", process.env.NEXT_PUBLIC_API_BASE);
-    console.log("🧪 OAUTH BASE:", process.env.NEXT_PUBLIC_OAUTH_BASE); // 여기를 꼭 확인
-  }, []);
-
   if (!user)
     return <p className="text-white text-center mt-10">로딩중...</p>;
 
@@ -67,8 +62,6 @@ export default function MyPage() {
     ? user.profileImage // ✅ 절대 URL이면 그대로 사용
     : `http://43.201.178.143:8080${user.profileImage.startsWith("/") ? "" : "/"}${user.profileImage}`
   : "/default-profile.png";
-
-  console.log("🖼 프로필 이미지 URL:", profileImageUrl);
 
   return (
     <main
