@@ -60,7 +60,7 @@ public class SeatService {
                 seat.setHoldExpiresAt(LocalDateTime.now().plusMinutes(HOLD_MINUTES));
             } else {
                 if (seat.getHoldUser() != null && seat.isHoldActiveFor(startTime, endTime)) {
-                    throw new IllegalStateException("다른 사용자가 해당 시간대를 홀드 중입니다.");
+                    throw new IllegalStateException("다른 사용자가 해당 시간대를 예약 중입니다.");
                 }
                 seat.setStatus("hold");
                 seat.setHoldUser(user);

@@ -30,7 +30,7 @@ export default function QrViewPage() {
     >
       <div className="text-center backdrop-blur-md bg-white/10 border border-white/30 p-8 rounded-xl text-white shadow-xl max-w-sm w-full">
         <h1 className="text-2xl font-bold mb-4">입장용 QR 코드</h1>
-        <p className="text-sm mb-4">입구 단말기에 QR을 스캔해 입장해주세요.</p>
+        <p className="text-sm mb-4">QR을 스캔해 입장해주세요.</p>
 
         {qrBase64 ? (
           <img src={qrBase64} alt="QR Code" className="w-full h-auto rounded bg-white p-2" />
