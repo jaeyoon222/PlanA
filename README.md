@@ -24,12 +24,16 @@ backend/
 ├── dto/                # 요청/응답 DTO
 └── StudyCafeApplication.java  # 메인 클래스
 
+---
+
 ## 🗂️ 시스템 아키텍처
 
 본 프로젝트는 AWS EC2 위에 Docker 컨테이너를 통해 프론트엔드와 백엔드를 구성하였으며,  
 Redis를 통한 실시간 좌석 전파 및 MySQL 기반의 데이터 관리를 수행합니다.
 
 ![시스템 아키텍처 다이어그램](./docs/system-architecture.png)
+
+##실행 방법
 
 # 1. 저장소 클론
 git clone https://github.com/jaeyoon222/StudyCafe.git
