@@ -34,11 +34,11 @@ Redis를 통한 실시간 좌석 전파 및 MySQL 기반의 데이터 관리를 
 ![시스템 아키텍처 다이어그램](./docs/system-architecture.png)
 
 ## 실행 방법
-1. 저장소 클론
+### 저장소 클론
 git clone https://github.com/jaeyoon222/StudyCafe.git
 cd StudyCafe
-2. 도커 실행
+### 도커 실행
 docker-compose up --build
 
-## 배포링크
+### 배포링크
 http://43.201.178.143:3000/
